@@ -7,7 +7,7 @@ $ git clone https://github.com/labricecat/loglang
 $ cd LogLang
 $ catmods sync
 $ g++ main.cpp -o ll
-``
+```
 
 ## Usage
 ```
