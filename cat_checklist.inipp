@@ -4,6 +4,6 @@
 name = "loglang"
 
 [Download]
-dependencies = ["catcaretaker/kittenlexer","argparser"]
+dependencies = ["catcaretaker/kittenlexer","labricecat/argparser"]
 files = []
 
