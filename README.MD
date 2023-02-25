@@ -6,7 +6,9 @@
 $ git clone https://github.com/labricecat/loglang
 $ cd LogLang
 $ catmods sync
-$ g++ main.cpp -o ll
+$ mkdir build && cd build
+$ cmake .. && make install
+$ ll
 ```
 
 ## Usage
@@ -21,7 +23,7 @@ $> file <file.ll>
 ```
 FUNCTIONARGS STATEMENT, STATEMENT, ...
 ```
-### Examples:
+### Examples
 ```
 ; function t with no arguments that returns true
 t TRUE
