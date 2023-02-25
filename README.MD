@@ -5,7 +5,7 @@
 ```
 $ git clone https://github.com/labricecat/loglang
 $ cd LogLang
-$ catmods sync
+$ catcare sync
 $ mkdir build && cd build
 $ cmake .. && make install
 $ ll
@@ -42,4 +42,10 @@ or3 or2(or2(1 2) 3)
 
 ; function if3 that returns its second parameter if the first is true, otherwise the third
 if3 or3((1 & 2) (2 & 3) (!1 & 3))
+
+; function sw1 with 2 return values
+sw1 if3(1 t f), if3(!1 t f)
+
+; defines a function foo2 which uses the first and second return value of sw1
+foo2 sw1(1) & sw<2>(!2)
 ```
