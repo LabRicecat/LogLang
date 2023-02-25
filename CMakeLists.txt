@@ -1,13 +1,13 @@
 cmake_minimum_required(VERSION 3.9)
 
-project(ll 
+project(loglang 
     VERSION 1.0.0
     LANGUAGES CXX
     DESCRIPTION "A pure functional logic language"
 )
 
 set(CMAKE_CXX_STANDARD 20)
-set(BINARY ll)
+set(BINARY loglang)
 set(SOURCE 
     main.cpp 
 )
