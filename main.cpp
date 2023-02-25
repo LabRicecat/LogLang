@@ -39,8 +39,9 @@ int main(int argc, char** argv) {
     std::vector<ll_function> functions;
 
     std::cout << " --- Loglang Shell ---\n"
-            << "This is free software without any warrenty!\n"
-            << "By: LabRicecat (c) 2023\n\n";
+            << "This is free software without any warranty!\n"
+            << "Use `help` for help.\n"
+            << "LabRicecat (c) 2023\n\n";
 
     while(true) {
         std::cout << layout;
@@ -82,6 +83,15 @@ int main(int argc, char** argv) {
         }
         else if(is_of(command,"quit","q","exit",":q",":q!")) {
             break;
+        }
+        else if(is_of(command,"help","h")) {
+            std::cout << 
+                "file <file.ll>    : loads a file\n" <<
+                "clear             : clears all data\n" <<
+                "eval <statement>  : evaluates a statement\n" <<
+                "def|fn <function> : defined a function\n" <<
+                "quit|exit         : exits the program\n" <<
+                "help              : this\n";
         }
         else if(command != "") {
             std::cout << "Unknown \"" + command + "\"\n";
