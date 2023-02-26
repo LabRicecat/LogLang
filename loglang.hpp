@@ -12,7 +12,7 @@ namespace ll {
     inline static bool val_show = false;
     inline static bool run_show = false;
 
-    inline std::string body_out(std::vector<std::string> body) {
+    inline static std::string body_out(std::vector<std::string> body) {
         std::string out;
         for(auto i : body) {
             if(i.front() == '(' || i.front() == '<') if(out.back() == ' ') out.pop_back();
@@ -46,10 +46,10 @@ struct ll_builtin {
 };
 
 template<typename ..._Targs>
-inline ll_result_t ll_run(std::string function, std::vector<ll_function> functions, _Targs ...targs);
+inline static ll_result_t ll_run(std::string function, std::vector<ll_function> functions, _Targs ...targs);
 inline static ll_result_t ll_eval(std::string src, std::string function, std::vector<ll_function> functions, std::vector<ll_result_t> args);
 inline static ll_result_t ll_eval(std::vector<std::string> body, std::string function, std::vector<ll_function> functions, std::vector<ll_result_t> args);
-inline ll_result_t ll_runf(std::string function, std::vector<ll_function> functions, std::vector<ll_result_t> args, int result);
+inline static ll_result_t ll_runf(std::string function, std::vector<ll_function> functions, std::vector<ll_result_t> args, int result);
 inline static ll_result_t ll_eval_f(std::vector<std::string> body, std::string function, size_t& idx, std::vector<ll_function> functions, std::vector<ll_result_t> args);
 
 inline static ll_function ll_parse_funame(std::string token, int line) {
@@ -73,7 +73,7 @@ inline static ll_function ll_parse_funame(std::string token, int line) {
     return f;
 }
 
-inline std::vector<ll_function> ll_parse(std::string source) {
+inline static std::vector<ll_function> ll_parse(std::string source) {
     KittenLexer lexer = KittenLexer()
         .add_ignore(' ')
         .add_ignore('\t')
@@ -135,7 +135,7 @@ inline std::vector<ll_function> ll_parse(std::string source) {
     return funs;
 }
 
-inline std::string ll_error() {
+inline static std::string ll_error() {
     std::string r = _ll_err.message;
     _ll_err.message = "";
     return r;
@@ -384,13 +384,13 @@ inline static ll_result_t ll_eval(std::vector<std::string> body, std::string fun
 }
 
 template<typename ..._Targs>
-inline ll_result_t ll_run(std::string function, std::vector<ll_function> functions, _Targs ...targs) {
+inline static ll_result_t ll_run(std::string function, std::vector<ll_function> functions, _Targs ...targs) {
     std::vector<ll_result_t> args = {targs...};
 
     return ll_runf(function,functions,args,0);
 }
 
-inline ll_result_t ll_runf(std::string function, std::vector<ll_function> functions, std::vector<ll_result_t> args, int result) {
+inline static ll_result_t ll_runf(std::string function, std::vector<ll_function> functions, std::vector<ll_result_t> args, int result) {
 #ifdef LL_ADV_CONFIGS
     if(ll::run_show) {
         std::cout << "[LL runf()]: " << function << "( ";
