@@ -5,6 +5,26 @@
 
 #include <fstream>
 
+#ifdef LL_ADV_CONFIGS
+
+namespace ll {
+    inline static bool eval_show = false;
+    inline static bool val_show = false;
+    inline static bool run_show = false;
+
+    inline std::string body_out(std::vector<std::string> body) {
+        std::string out;
+        for(auto i : body) {
+            if(i.front() == '(' || i.front() == '<') if(out.back() == ' ') out.pop_back();
+            out += i;
+            if(i != "!") out += " ";
+        }
+        return out;
+    }
+}
+
+#endif
+
 using ll_result_t = bool;
 
 struct ll_function {
@@ -186,7 +206,10 @@ inline static ll_result_t ll_val(std::string src, std::string function, std::vec
         _ll_err.message = "unexpected token: " + src;
         return false;
     }
-
+#ifdef LL_ADV_CONFIGS
+    if(ll::val_show)
+        std::cout << "[LL val()]: " << src << " -> " << ((i % 2 == 0 ? res : !res) ? "TRUE" : "FALSE") << "\n";
+#endif
     return i % 2 == 0 ? res : !res;
 }
 
@@ -293,6 +316,10 @@ inline static ll_result_t ll_eval_f(std::vector<std::string> body, std::string f
 }
 
 inline static ll_result_t ll_eval(std::vector<std::string> body, std::string function, std::vector<ll_function> functions, std::vector<ll_result_t> args) {
+#ifdef LL_ADV_CONFIGS
+    if(ll::eval_show)
+        std::cout << "[LL eval()]: " << ll::body_out(body) << "\n";
+#endif
     ll_result_t lhs;
     bool lhsdef = false;
     int not_f = 0;
@@ -364,6 +391,13 @@ inline ll_result_t ll_run(std::string function, std::vector<ll_function> functio
 }
 
 inline ll_result_t ll_runf(std::string function, std::vector<ll_function> functions, std::vector<ll_result_t> args, int result) {
+#ifdef LL_ADV_CONFIGS
+    if(ll::run_show) {
+        std::cout << "[LL runf()]: " << function << "( ";
+        for(auto i : args) std::cout << (i ? "TRUE" : "FALSE") << " ";
+        std::cout << ")\n";
+    }
+#endif
     ll_function f = ll_getf(function,functions);
     if(_ll_err) { return false; }
 

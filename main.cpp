@@ -1,3 +1,5 @@
+
+#define LL_ADV_CONFIGS
 #include "loglang.hpp"
 #include "catmods/argparser/argparser.h"
 
@@ -35,9 +37,59 @@ bool is_of(std::string c, Targs ...args) {
 #define noarg() if(true) { if(arg != "") { std::cout << "Command does not allow an argument!\n"; continue; } } else do {} while(0)
 int main(int argc, char** argv) {
     std::string layout = "$> ", input;
-
     std::vector<ll_function> functions;
-
+    
+    if(argc >= 2) {
+        std::string arg;
+        for(size_t i = 1; i < argc; ++i) {
+            arg = std::string(argv[i]);
+            if(arg.front() == '-') {
+                arg.erase(arg.begin());
+                for(auto c : arg) {
+                    switch(c) {
+                        case 'e':
+                            ll::eval_show = true;
+                            break;
+                        case 'v':
+                            ll::val_show = true;
+                            break;
+                        case 'r':
+                            ll::run_show = true;
+                            break;
+                        case 'a':
+                            ll::eval_show = true;
+                            ll::val_show = true;
+                            ll::run_show = true;
+                            break;
+                        case 'h':
+                            std::cout << "# LogLang shell\n\n"
+                                << "  Usage: loglang [options] [files]\n\n"
+                                << "Loads FILES if any, and opens the loglang shell.\n"
+                                << "Options: \n"
+                                << " -e : shows all eval() steps\n"
+                                << " -v : shows all val() steps\n"
+                                << " -r : shows all runf() steps\n"
+                                << " -a : all the 3 above\n"
+                                << " -h : this\n"
+                                << "Note: `-v -e` is the same as `-ve`\n";
+                            std::exit(0);
+                            break;
+                        default:
+                            std::cout << "unknown option: " << c << "\n"
+                            << "  try -h for help!\n";
+                            std::exit(1);
+                            break;
+                    }
+                }
+            }
+            else {
+                auto fns = ll_parse(rd(arg));
+                if(_ll_err) { std::cout << ll_error() << "\n"; std::exit(1); }
+                for(auto i : fns) functions.push_back(i);
+            }
+        }
+    }
+    
     std::cout << " --- Loglang Shell ---\n"
             << "This is free software without any warranty!\n"
             << "Use `help` for help.\n"
@@ -66,7 +118,7 @@ int main(int argc, char** argv) {
             std::cout << f.name;
             for(size_t i = 0; i < f.body.size(); ++i) {
                 for(auto j : f.body[i]) 
-                    std::cout << " " << i;
+                    std::cout << " " << j;
                 if(i + 1 < f.body.size()) std::cout << ",";
             }
             std::cout << "\n";
