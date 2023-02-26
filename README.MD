@@ -8,7 +8,7 @@ $ cd LogLang
 $ catcare sync
 $ mkdir build && cd build
 $ cmake .. && make install
-$ ll
+$ loglang
 ```
 
 ## Usage
