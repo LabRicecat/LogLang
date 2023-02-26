@@ -13,5 +13,5 @@ set(SOURCE
 )
 
 add_executable(${BINARY} ${SOURCE})
-
+target_link_options(${BINARY} PUBLIC -lreadline)
 install(TARGETS ${BINARY})

@@ -2,6 +2,7 @@
 #define LL_ADV_CONFIGS
 #include "loglang.hpp"
 #include "catmods/argparser/argparser.h"
+#include <readline/readline.h>
 
 std::tuple<std::string,std::string> split_sh(std::string src) {
     int i = 0;
@@ -96,8 +97,7 @@ int main(int argc, char** argv) {
             << "LabRicecat (c) 2023\n\n";
 
     while(true) {
-        std::cout << layout;
-        std::getline(std::cin,input);
+        input = readline(layout.c_str());
         auto [command, arg] = split_sh(input);
 
         if(is_of(command,"file","f","fi")) {
