@@ -32,6 +32,8 @@ FUNCTIONARGS STATEMENT, STATEMENT, ...
 ; function t with no arguments that returns true
 t TRUE
 
+f FALSE
+
 ; function f1 with one parameter that returns its parameter
 f1 1
 
