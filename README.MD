@@ -17,6 +17,7 @@ $> fn <function definition>
 $> eval <function>(parameter)
 $> info <function>
 $> file <file.ll>
+$> help
 ```
 
 ## Syntax
