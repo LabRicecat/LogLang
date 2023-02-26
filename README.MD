@@ -25,6 +25,9 @@ FUNCTIONARGS STATEMENT, STATEMENT, ...
 ```
 ### Examples
 ```
+; imports different files
+% file.ll file2.ll ...
+
 ; function t with no arguments that returns true
 t TRUE
 

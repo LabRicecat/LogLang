@@ -73,7 +73,7 @@ int main(int argc, char** argv) {
         }
         else if(is_of(command,"eval","e","ev")) {
             hasarg();
-            std::cout << (ll_eval(arg,functions,{}) ? "TRUE" : "FALSE") << "\n";
+            std::cout << (ll_eval(arg,"",functions,{}) ? "TRUE" : "FALSE") << "\n";
             errc();
         }
         else if(is_of(command,"def","d","fn")) {

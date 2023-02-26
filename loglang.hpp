@@ -3,6 +3,8 @@
 
 #include "catmods/kittenlexer/kittenlexer.hpp"
 
+#include <fstream>
+
 using ll_result_t = bool;
 
 struct ll_function {
@@ -25,10 +27,10 @@ struct ll_builtin {
 
 template<typename ..._Targs>
 inline ll_result_t ll_run(std::string function, std::vector<ll_function> functions, _Targs ...targs);
-inline static ll_result_t ll_eval(std::string src, std::vector<ll_function> functions, std::vector<ll_result_t> args);
-inline static ll_result_t ll_eval(std::vector<std::string> body, std::vector<ll_function> functions, std::vector<ll_result_t> args);
+inline static ll_result_t ll_eval(std::string src, std::string function, std::vector<ll_function> functions, std::vector<ll_result_t> args);
+inline static ll_result_t ll_eval(std::vector<std::string> body, std::string function, std::vector<ll_function> functions, std::vector<ll_result_t> args);
 inline ll_result_t ll_runf(std::string function, std::vector<ll_function> functions, std::vector<ll_result_t> args, int result);
-inline static ll_result_t ll_eval_f(std::vector<std::string> body, size_t& idx, std::vector<ll_function> functions, std::vector<ll_result_t> args);
+inline static ll_result_t ll_eval_f(std::vector<std::string> body, std::string function, size_t& idx, std::vector<ll_function> functions, std::vector<ll_result_t> args);
 
 inline static ll_function ll_parse_funame(std::string token, int line) {
     ll_function f;
@@ -62,6 +64,7 @@ inline std::vector<ll_function> ll_parse(std::string source) {
         .erase_empty()
         .add_lineskip(';')
         .add_extract(',')
+        // .add_backslashopt('\n',' ')
         .add_linebreak('\n');
     auto lexed = lexer.lex(source);
 
@@ -77,6 +80,22 @@ inline std::vector<ll_function> ll_parse(std::string source) {
 
     std::vector<ll_function> funs;
     for(size_t line = 0; line < lines.size(); ++line) {
+        if(lines[line][0] == "%") {
+            std::ifstream rd;
+            for(size_t i = 1; i < lines[line].size(); ++i) {
+                rd.open(lines[line][i]);
+                if(!rd.is_open()) {
+                    _ll_err.message = "no such file: " + lines[line][i];
+                    return {};
+                }
+                std::string in;
+                while(rd.good()) in += rd.get();
+                if(in != "") in.pop_back();
+
+                auto fns = ll_parse(in);
+                for(auto f : fns) funs.push_back(f);
+            }
+        }
         ll_function fun = ll_parse_funame(lines[line][0],line);
         if(_ll_err) return {};
 
@@ -119,7 +138,7 @@ inline static bool ll_isnum(std::string src) {
     return true;
 }
 
-inline static ll_result_t ll_val(std::string src, std::vector<ll_function> functions, std::vector<ll_result_t> args) {
+inline static ll_result_t ll_val(std::string src, std::string function, std::vector<ll_function> functions, std::vector<ll_result_t> args) {
     size_t i;
     for(i = 0; i < src.size() && src[i] == '!'; ++i) src.erase(src.begin());
     ll_result_t res;
@@ -135,7 +154,25 @@ inline static ll_result_t ll_val(std::string src, std::vector<ll_function> funct
     else if(src.front() == '(') {
         src.pop_back();
         src.erase(src.begin());
-        res = ll_eval(src,functions,args);
+        res = ll_eval(src,function,functions,args);
+    }
+    else if(src.front() == '#') {
+        if(function == "") {
+            _ll_err.message = "using return value reference outside function";
+            return false;
+        }
+        src.erase(src.begin());
+        if(!ll_isnum(src)) {
+            _ll_err.message = "not a number as return value reference";
+            return false;
+        }
+        int res = std::stoi(src) - 1;
+        ll_function f = ll_getf(function,functions);
+        if(res >= f.body.size()) {
+            _ll_err.message = "no such return value: " + std::to_string(res) + " " + function;
+            return false;
+        }
+        return ll_eval(f.body[res],f.name,functions,args);
     }
     else if(ll_isf(src,functions)) {
         ll_function f = ll_getf(src,functions);
@@ -153,11 +190,12 @@ inline static ll_result_t ll_val(std::string src, std::vector<ll_function> funct
     return i % 2 == 0 ? res : !res;
 }
 
-inline static std::vector<ll_result_t> ll_argparse(std::string src, std::vector<ll_function> functions, std::vector<ll_result_t> args) {
+inline static std::vector<ll_result_t> ll_argparse(std::string src, std::string function, std::vector<ll_function> functions, std::vector<ll_result_t> args) {
     KittenLexer lexer = KittenLexer()
         .add_ignore(' ')
         .add_ignore('\t')
         .add_capsule('(',')')
+        .add_capsule('<','>')
         .erase_empty()
         .add_lineskip(';')
         .add_linebreak('\n');
@@ -171,22 +209,22 @@ inline static std::vector<ll_result_t> ll_argparse(std::string src, std::vector<
         if(body[i].front() == '(') {
             body[i].erase(body[i].begin());
             body[i].pop_back();
-            pargs.push_back(ll_eval(body[i],functions,args));
+            pargs.push_back(ll_eval(body[i],function,functions,args));
         }
         else if(ll_isf(body[i],functions)) {
             ll_function f = ll_getf(body[i],functions);
-            auto val = ll_eval_f(body,i,functions,args);
+            auto val = ll_eval_f(body,function,i,functions,args);
             if(_ll_err) return {};
             pargs.push_back(val);
         } 
-        else pargs.push_back(ll_val(body[i],functions,args));
+        else pargs.push_back(ll_val(body[i],function,functions,args));
 
         if(_ll_err) return {};
     }
     return pargs;
 }
 
-inline static ll_result_t ll_eval(std::string src, std::vector<ll_function> functions, std::vector<ll_result_t> args) {
+inline static ll_result_t ll_eval(std::string src, std::string function, std::vector<ll_function> functions, std::vector<ll_result_t> args) {
     KittenLexer lexer = KittenLexer()
         .add_ignore(' ')
         .add_ignore('\t')
@@ -202,10 +240,10 @@ inline static ll_result_t ll_eval(std::string src, std::vector<ll_function> func
 
     for(auto i : lexed) body.push_back(i.src);
     
-    return ll_eval(body,functions,args);
+    return ll_eval(body,function, functions,args);
 }
 
-inline static ll_result_t ll_eval_f(std::vector<std::string> body, size_t& idx, std::vector<ll_function> functions, std::vector<ll_result_t> args) {
+inline static ll_result_t ll_eval_f(std::vector<std::string> body, std::string function, size_t& idx, std::vector<ll_function> functions, std::vector<ll_result_t> args) {
     ll_function f = ll_getf(body[idx],functions);
     if(_ll_err) return false;
     if(idx + 1 < body.size()) {
@@ -230,7 +268,7 @@ inline static ll_result_t ll_eval_f(std::vector<std::string> body, size_t& idx, 
         if(parens.front() == '(') {
             parens.pop_back();
             parens.erase(parens.begin());
-            _args = ll_argparse(parens,functions,args);
+            _args = ll_argparse(parens,function,functions,args);
             if(_ll_err) return {};
             if(f.argc > _args.size()) {
                 _ll_err.message = "function " + f.name + ": not enough arguments";
@@ -243,10 +281,10 @@ inline static ll_result_t ll_eval_f(std::vector<std::string> body, size_t& idx, 
         }
         else --idx;
 
-        return ll_eval(f.body[return_val],functions,_args);
+        return ll_eval(f.body[return_val],f.name,functions,_args);
     }
     else if(f.argc == 0) {
-        return ll_eval(f.body[0],functions,{});
+        return ll_eval(f.body[0],f.name,functions,{});
     }
     else {
         _ll_err.message = "no parameter for funtion " + f.name;
@@ -254,7 +292,7 @@ inline static ll_result_t ll_eval_f(std::vector<std::string> body, size_t& idx, 
     }
 }
 
-inline static ll_result_t ll_eval(std::vector<std::string> body, std::vector<ll_function> functions, std::vector<ll_result_t> args) {
+inline static ll_result_t ll_eval(std::vector<std::string> body, std::string function, std::vector<ll_function> functions, std::vector<ll_result_t> args) {
     ll_result_t lhs;
     bool lhsdef = false;
     int not_f = 0;
@@ -264,7 +302,7 @@ inline static ll_result_t ll_eval(std::vector<std::string> body, std::vector<ll_
         else if(body[i] == "&" && (and_f || not_f || !lhsdef)) { _ll_err.message = "invalid & as token " + std::to_string(i+1); return false; }
         else if(body[i] == "&") ++and_f;
         else if(ll_isf(body[i],functions)) {
-            auto val = ll_eval_f(body,i,functions,args);
+            auto val = ll_eval_f(body,function,i,functions,args);
             if(_ll_err) return false;
             if(not_f % 2 == 1) lhs = !lhs;
             not_f = 0;
@@ -287,7 +325,7 @@ inline static ll_result_t ll_eval(std::vector<std::string> body, std::vector<ll_
         }
         else {
             if(lhsdef) {
-                auto val = ll_val(body[i],functions,args);
+                auto val = ll_val(body[i],function, functions,args);
                 if(_ll_err) return false;
                 if(not_f % 2 == 1) val = !val;
                 not_f = 0;
@@ -302,7 +340,7 @@ inline static ll_result_t ll_eval(std::vector<std::string> body, std::vector<ll_
                 }
             }
             else {
-                lhs = ll_val(body[i],functions,args);
+                lhs = ll_val(body[i],function,functions,args);
                 if(_ll_err) return false;
                 if(not_f % 2 == 1) lhs = !lhs;
                 not_f = 0;
@@ -337,12 +375,12 @@ inline ll_result_t ll_runf(std::string function, std::vector<ll_function> functi
         _ll_err.message = "function " + f.name + ": too many arguments";
         return false;
     }
-    else if(result > f.body.size()) {
+    else if(result >= f.body.size()) {
         _ll_err.message = "function " + f.name + ": no such return value: " + std::to_string(result);
         return false;
     }
 
-    return ll_eval(f.body[result],functions,args);
+    return ll_eval(f.body[result],f.name,functions,args);
 }
 
 #endif
