@@ -1,5 +1,4 @@
-# LogLang
-(yes, name in progress, leave me alone)
+# Mathenyatica
 
 ## Installation
 For this project, you need to install the [CatCaretaker](https://github.com/labricecat/catcaretaker) for dependency management. (The `catcare` command below)
@@ -18,7 +17,7 @@ $> fn <function definition>
 $> eval <function>(parameter)
 $> info <function>
 $> file <file.ll>
-$> help
+$> mathenyatica
 ```
 
 ## Syntax
