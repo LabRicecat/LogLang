@@ -1,7 +1,7 @@
 # LogLang
 (yes, name in progress, leave me alone)
 
-## Instalation
+## Installation
 ```
 $ git clone https://github.com/labricecat/loglang
 $ cd LogLang
