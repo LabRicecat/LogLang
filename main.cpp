@@ -128,6 +128,33 @@ int main(int argc, char** argv) {
             std::cout << (ll_eval(arg,"",functions,{}) ? "TRUE" : "FALSE") << "\n";
             errc();
         }
+        else if(is_of(command,"view","v","all")) {
+            hasarg();
+            std::string cm;
+            KittenLexer lexer = KittenLexer()
+                .add_ignore(' ')
+                .add_ignore('\t')
+                .add_capsule('(',')')
+                .add_capsule('<','>')
+                .erase_empty()
+                .add_lineskip(';')
+                .add_linebreak('\n');
+            auto lexed = lexer.lex(arg);
+            if(lexed.size() != 2 || !ll_isf(lexed[0].src,functions) || lexed[1].src[0] != '(') {
+                std::cout << "Expected function call\n";
+                continue;
+            }
+            ll_function f = ll_getf(lexed[0].src,functions);
+
+            std::string args;
+            lexed[1].src.erase(lexed[1].src.begin());
+            lexed[1].src.pop_back();
+            auto parsed_args = ll_argparse(lexed[1].src,"",functions,{});
+
+            for(size_t i = 0; i < f.body.size(); ++i) {
+                std::cout << f.name << "<" << (i+1) << ">: " << (ll_runf(f.name,functions,parsed_args,i) ? "TRUE" : "FALSE") << "\n";
+            }
+        }
         else if(is_of(command,"def","d","fn")) {
             auto fns = ll_parse(arg);
             errc();
@@ -138,12 +165,13 @@ int main(int argc, char** argv) {
         }
         else if(is_of(command,"help","h")) {
             std::cout << 
-                "file <file.ll>    : loads a file\n" <<
-                "clear             : clears all data\n" <<
-                "eval <statement>  : evaluates a statement\n" <<
-                "def|fn <function> : defined a function\n" <<
-                "quit|exit         : exits the program\n" <<
-                "help              : this\n";
+                "file <file.ll>     : loads a file\n" <<
+                "clear              : clears all data\n" <<
+                "eval <statement>   : evaluates a statement\n" <<
+                "def|fn <function>  : defined a function\n" <<
+                "quit|exit          : exits the program\n" <<
+                "view <functioncall>: shows all return values of a function\n"
+                "help               : this\n";
         }
         else if(command != "") {
             std::cout << "Unknown \"" + command + "\"\n";

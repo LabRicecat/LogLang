@@ -410,7 +410,11 @@ inline ll_result_t ll_runf(std::string function, std::vector<ll_function> functi
         return false;
     }
     else if(result >= f.body.size()) {
-        _ll_err.message = "function " + f.name + ": no such return value: " + std::to_string(result);
+        _ll_err.message = "function " + f.name + ": no such return value: " + std::to_string(result + 1);
+        return false;
+    }
+    else if(result < 0) {
+        _ll_err.message = "function " + f.name + ": no such return value: " + std::to_string(result + 1);
         return false;
     }
 
