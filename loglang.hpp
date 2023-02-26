@@ -421,4 +421,59 @@ inline ll_result_t ll_runf(std::string function, std::vector<ll_function> functi
     return ll_eval(f.body[result],f.name,functions,args);
 }
 
+// OOP Syntax Sugar
+struct ll_interpreter {
+    std::vector<ll_function> functions;
+
+    template<typename ...Targs>
+    ll_result_t run_function(std::string function, Targs ...targs) {
+        std::vector<ll_result_t> args = {targs...};
+        return ll_runf(function,functions,args,0);
+    }
+    template<int _Tres, typename ...Targs>
+    ll_result_t run_function(std::string function, Targs ...targs) {
+        std::vector<ll_result_t> args = {targs...};
+        return ll_runf(function,functions,args,_Tres);
+    }
+    template<typename ...Targs>
+    ll_result_t run_function(std::string function, int result, Targs ...targs) {
+        std::vector<ll_result_t> args = {targs...};
+        return ll_runf(function,functions,args,result);
+    }
+    template<typename ...Targs>
+    std::vector<ll_result_t> run_function_all(std::string function,  Targs ...targs) {
+        std::vector<ll_result_t> args = {targs...};
+        std::vector<ll_result_t> results;
+        ll_function f = ll_getf(function, functions);
+        for(size_t i = 0; i < f.body.size(); ++i) {
+            results.push_back(ll_runf(function,functions,args,i));
+            if(_ll_err) return false;
+        }
+        return results;
+    }
+
+    ll_interpreter& parse(std::string src) {
+        auto fns = ll_parse(src);
+        for(auto i : fns) functions.push_back(i);
+        return *this;
+    }
+
+    ll_interpreter& clear() {
+        functions.clear();
+        return *this;
+    }
+
+    ll_result_t eval(std::string expression) {
+        return ll_eval(expression,"",functions,{});
+    }
+
+    ll_function get_function(std::string name) {
+        return ll_getf(name,functions);
+    }
+
+    bool is_function(std::string name) {
+        return ll_isf(name,functions);
+    }
+};
+
 #endif
