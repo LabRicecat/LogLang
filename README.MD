@@ -42,7 +42,7 @@ f1 1
 f2 1 & 2
 
 ; function "or2" with 2 parameters
-or2 !(!1 & !1)
+or2 !(!1 & !2)
 
 ; function that takes 3 parameters and return arg1 OR arg2 OR arg3
 or3 or2(or2(1 2) 3)
