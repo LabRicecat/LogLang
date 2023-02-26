@@ -115,13 +115,19 @@ int main(int argc, char** argv) {
             hasarg();
             ll_function f = ll_getf(arg,functions);
             errc();
-            std::cout << f.name;
-            for(size_t i = 0; i < f.body.size(); ++i) {
-                for(auto j : f.body[i]) 
-                    std::cout << " " << j;
-                if(i + 1 < f.body.size()) std::cout << ",";
+            std::cout << f.name << " ";
+            std::string out;
+            for(auto b : f.body) {
+                for(auto i : b) {
+                    if(i.front() == '(' || i.front() == '<') if(out.back() == ' ') out.pop_back();
+                    out += i;
+                    if(i != "!") out += " ";
+                }
+                if(out.back() == ' ') out.pop_back();
+                out += ", ";
             }
-            std::cout << "\n";
+            if(out != "") { out.pop_back(); out.pop_back(); }
+            std::cout << out << "\n";
         }
         else if(is_of(command,"eval","e","ev")) {
             hasarg();
@@ -170,7 +176,8 @@ int main(int argc, char** argv) {
                 "eval <statement>   : evaluates a statement\n" <<
                 "def|fn <function>  : defined a function\n" <<
                 "quit|exit          : exits the program\n" <<
-                "view <functioncall>: shows all return values of a function\n"
+                "view <functioncall>: shows all return values of a function\n" <<
+                "info <function>    : shows information about a function\n" <<
                 "help               : this\n";
         }
         else if(command != "") {

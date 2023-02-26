@@ -447,7 +447,7 @@ struct ll_interpreter {
         ll_function f = ll_getf(function, functions);
         for(size_t i = 0; i < f.body.size(); ++i) {
             results.push_back(ll_runf(function,functions,args,i));
-            if(_ll_err) return false;
+            if(_ll_err) return {};
         }
         return results;
     }
