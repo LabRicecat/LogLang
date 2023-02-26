@@ -1,14 +1,14 @@
 # LogLang
 (yes, name in progress, leave me alone)
 
-## Instalation
+## Installation
 ```
 $ git clone https://github.com/labricecat/loglang
 $ cd LogLang
 $ catcare sync
 $ mkdir build && cd build
 $ cmake .. && make install
-$ ll
+$ loglang
 ```
 
 ## Usage
@@ -17,6 +17,7 @@ $> fn <function definition>
 $> eval <function>(parameter)
 $> info <function>
 $> file <file.ll>
+$> help
 ```
 
 ## Syntax
@@ -30,6 +31,8 @@ FUNCTIONARGS STATEMENT, STATEMENT, ...
 
 ; function t with no arguments that returns true
 t TRUE
+
+f FALSE
 
 ; function f1 with one parameter that returns its parameter
 f1 1
