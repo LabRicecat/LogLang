@@ -1,5 +1,5 @@
-#ifndef LOGLANG_HPP
-#define LOGLANG_HPP
+#ifndef MATHENYATICA_HPP
+#define MATHENYATICA_HPP
 
 #include "catmods/kittenlexer/kittenlexer.hpp"
 

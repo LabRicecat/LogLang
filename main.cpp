@@ -1,6 +1,6 @@
 
 #define LL_ADV_CONFIGS
-#include "loglang.hpp"
+#include "mathenyatica.hpp"
 #include "catmods/argparser/argparser.h"
 #include <readline/readline.h>
 
@@ -63,9 +63,9 @@ int main(int argc, char** argv) {
                             ll::run_show = true;
                             break;
                         case 'h':
-                            std::cout << "# LogLang shell\n\n"
-                                << "  Usage: loglang [options] [files]\n\n"
-                                << "Loads FILES if any, and opens the loglang shell.\n"
+                            std::cout << "# Mathenyatica shell\n\n"
+                                << "  Usage: mathenyatica [options] [files]\n\n"
+                                << "Loads FILES if any, and opens the mathenyatica shell.\n"
                                 << "Options: \n"
                                 << " -e : shows all eval() steps\n"
                                 << " -v : shows all val() steps\n"
@@ -91,8 +91,7 @@ int main(int argc, char** argv) {
         }
     }
     
-    std::cout << " --- Loglang Shell ---\n"
-            << "This is free software without any warranty!\n"
+    std::cout << " --- Mathenyatica Shell ---\n"
             << "Use `help` for help.\n"
             << "LabRicecat (c) 2023\n\n";
 
