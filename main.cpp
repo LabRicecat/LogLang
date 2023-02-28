@@ -1,5 +1,5 @@
 
-#define LL_ADV_CONFIGS
+#define mny_ADV_CONFIGS
 #include "mathenyatica.hpp"
 #include "catmods/argparser/argparser.h"
 #include <readline/readline.h>
@@ -33,12 +33,12 @@ bool is_of(std::string c, Targs ...args) {
     return false;
 }
 
-#define errc() if(true) { if(_ll_err) { std::cout << "Error: " << ll_error() << "\n"; continue; } } else do {} while(0)
+#define errc() if(true) { if(_mny_err) { std::cout << "Error: " << mny_error() << "\n"; continue; } } else do {} while(0)
 #define hasarg() if(true) { if(arg == "") { std::cout << "Command requires an argument!\n"; continue; } } else do {} while(0)
 #define noarg() if(true) { if(arg != "") { std::cout << "Command does not allow an argument!\n"; continue; } } else do {} while(0)
 int main(int argc, char** argv) {
     std::string layout = "$> ", input;
-    std::vector<ll_function> functions;
+    std::vector<mny_function> functions;
     
     if(argc >= 2) {
         std::string arg;
@@ -49,18 +49,18 @@ int main(int argc, char** argv) {
                 for(auto c : arg) {
                     switch(c) {
                         case 'e':
-                            ll::eval_show = true;
+                            mny::eval_show = true;
                             break;
                         case 'v':
-                            ll::val_show = true;
+                            mny::val_show = true;
                             break;
                         case 'r':
-                            ll::run_show = true;
+                            mny::run_show = true;
                             break;
                         case 'a':
-                            ll::eval_show = true;
-                            ll::val_show = true;
-                            ll::run_show = true;
+                            mny::eval_show = true;
+                            mny::val_show = true;
+                            mny::run_show = true;
                             break;
                         case 'h':
                             std::cout << "# Mathenyatica shell\n\n"
@@ -84,8 +84,8 @@ int main(int argc, char** argv) {
                 }
             }
             else {
-                auto fns = ll_parse(rd(arg));
-                if(_ll_err) { std::cout << ll_error() << "\n"; std::exit(1); }
+                auto fns = mny_parse(rd(arg));
+                if(_mny_err) { std::cout << mny_error() << "\n"; std::exit(1); }
                 for(auto i : fns) functions.push_back(i);
             }
         }
@@ -101,7 +101,7 @@ int main(int argc, char** argv) {
 
         if(is_of(command,"file","f","fi")) {
             hasarg();
-            auto fns = ll_parse(rd(arg));
+            auto fns = mny_parse(rd(arg));
             errc();
             for(auto i : fns) functions.push_back(i);
         }
@@ -112,7 +112,7 @@ int main(int argc, char** argv) {
         }
         else if(is_of(command,"info","i","in")) {
             hasarg();
-            ll_function f = ll_getf(arg,functions);
+            mny_function f = mny_getf(arg,functions);
             errc();
             std::cout << f.name << " ";
             std::string out;
@@ -130,7 +130,7 @@ int main(int argc, char** argv) {
         }
         else if(is_of(command,"eval","e","ev")) {
             hasarg();
-            std::cout << (ll_eval(arg,"",functions,{}) ? "TRUE" : "FALSE") << "\n";
+            std::cout << (mny_eval(arg,"",functions,{}) ? "TRUE" : "FALSE") << "\n";
             errc();
         }
         else if(is_of(command,"view","v","all")) {
@@ -145,23 +145,23 @@ int main(int argc, char** argv) {
                 .add_lineskip(';')
                 .add_linebreak('\n');
             auto lexed = lexer.lex(arg);
-            if(lexed.size() != 2 || !ll_isf(lexed[0].src,functions) || lexed[1].src[0] != '(') {
+            if(lexed.size() != 2 || !mny_isf(lexed[0].src,functions) || lexed[1].src[0] != '(') {
                 std::cout << "Expected function call\n";
                 continue;
             }
-            ll_function f = ll_getf(lexed[0].src,functions);
+            mny_function f = mny_getf(lexed[0].src,functions);
 
             std::string args;
             lexed[1].src.erase(lexed[1].src.begin());
             lexed[1].src.pop_back();
-            auto parsed_args = ll_argparse(lexed[1].src,"",functions,{});
+            auto parsed_args = mny_argparse(lexed[1].src,"",functions,{});
 
             for(size_t i = 0; i < f.body.size(); ++i) {
-                std::cout << f.name << "<" << (i+1) << ">: " << (ll_runf(f.name,functions,parsed_args,i) ? "TRUE" : "FALSE") << "\n";
+                std::cout << f.name << "<" << (i+1) << ">: " << (mny_runf(f.name,functions,parsed_args,i) ? "TRUE" : "FALSE") << "\n";
             }
         }
         else if(is_of(command,"def","d","fn")) {
-            auto fns = ll_parse(arg);
+            auto fns = mny_parse(arg);
             errc();
             for(auto i : fns) functions.push_back(i);
         }
@@ -170,7 +170,7 @@ int main(int argc, char** argv) {
         }
         else if(is_of(command,"help","h")) {
             std::cout << 
-                "file <file.ll>     : loads a file\n" <<
+                "file <file.mny>    : loads a file\n" <<
                 "clear              : clears all data\n" <<
                 "eval <statement>   : evaluates a statement\n" <<
                 "def|fn <function>  : defined a function\n" <<

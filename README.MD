@@ -1,10 +1,12 @@
 # Mathenyatica
 
 ## Installation
-For this project, you need to install the [CatCaretaker](https://github.com/labricecat/catcaretaker) for dependency management. (The `catcare` command below)
+For this project, you need to install the [CatCaretaker](https://github.com/labricecat/catcaretaker) for dependency management. (The `catcare` command below)  
+as well as the `readline` library.  
+To build, type: 
 ```
 $ git clone https://github.com/labricecat/mathenyatica
-$ cd LogLang
+$ cd mathenyatica
 $ catcare sync
 $ mkdir build && cd build
 $ cmake .. && make install
@@ -16,7 +18,7 @@ $ mathenyatica
 $> fn <function definition>
 $> eval <function>(parameter)
 $> info <function>
-$> file <file.ll>
+$> file <file.mny>
 $> mathenyatica
 ```
 
@@ -27,7 +29,7 @@ FUNCTIONARGS STATEMENT, STATEMENT, ...
 ### Examples
 ```
 ; imports different files
-% file.ll file2.ll ...
+% file.mny file2.mny ...
 
 ; function t with no arguments that returns true
 t TRUE
