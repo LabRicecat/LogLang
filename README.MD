@@ -3,7 +3,7 @@
 ## Installation
 For this project, you need to install the [CatCaretaker](https://github.com/labricecat/catcaretaker) for dependency management. (The `catcare` command below)
 ```
-$ git clone https://github.com/labricecat/loglang
+$ git clone https://github.com/labricecat/mathenyatica
 $ cd LogLang
 $ catcare sync
 $ mkdir build && cd build
