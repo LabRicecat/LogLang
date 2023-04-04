@@ -4,6 +4,6 @@
 name = "mathenyatica"
 
 [Download]
-dependencies = ["catcaretaker/kittenlexer","labricecat/argparser"]
+dependencies = ["https://raw.githubusercontent.com/catcaretaker/kittenlexer/main/","https://raw.githubusercontent.com/labricecat/argparser/main/"]
 files = ["mathenyatica.hpp"]
 

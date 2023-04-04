@@ -1,7 +1,7 @@
 
 #define mny_ADV_CONFIGS
 #include "mathenyatica.hpp"
-#include "catmods/argparser/argparser.h"
+#include "catpkgs/argparser/argparser.h"
 #include <readline/readline.h>
 
 std::tuple<std::string,std::string> split_sh(std::string src) {

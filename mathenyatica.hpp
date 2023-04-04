@@ -1,7 +1,7 @@
 #ifndef MATHENYATICA_HPP
 #define MATHENYATICA_HPP
 
-#include "catmods/kittenlexer/kittenlexer.hpp"
+#include "catpkgs/kittenlexer/kittenlexer.hpp"
 
 #include <fstream>
 
